@@ -13,7 +13,9 @@ import {
 	receiveMessage,
 } from '@/lib/features/chat/chatSlice';
 
-const socket = io('http://localhost:5000'); // Initialize socket connection
+const socket = io('https://chat-app-backend-dx99.onrender.com', {
+	withCredentials: true,
+}); // Initialize socket connection
 
 export function ChatArea() {
 	const { selectedChat, messages } = useAppSelector((state) => state.chat);

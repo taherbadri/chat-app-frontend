@@ -16,7 +16,7 @@ import {
 	markMessageAsRead,
 } from '@/lib/features/chat/chatSlice';
 
-const socket = io('http://localhost:5000'); // Initialize socket connection
+const socket = io('https://chat-app-backend-dx99.onrender.com'); // Initialize socket connection
 
 export function ChatInterface() {
 	const dispatch = useAppDispatch();

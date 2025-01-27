@@ -28,6 +28,8 @@ import {
 import { Switch } from '@/components/ui/switch';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getChats, setSelectedChat } from '@/lib/features/chat/chatSlice';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+// import { Badge } from "@/components/ui/badge" // Removed Badge import
 
 const navItems = [
 	{
@@ -66,7 +68,7 @@ export function AppSidebar({ ...props }) {
 
 	React.useEffect(() => {
 		dispatch(getChats());
-	}, []);
+	}, [dispatch]); // Added dispatch to dependencies
 
 	return (
 		<Sidebar
@@ -142,38 +144,53 @@ export function AppSidebar({ ...props }) {
 				<SidebarContent>
 					<SidebarGroup className="px-0">
 						<SidebarGroupContent>
-							{chats.map((chat) => (
-								<a
-									href="#"
-									key={chat._id}
-									className={`flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
-										chat._id === selectedChat ? 'bg-sidebar-accent' : ''
-									}`}
-									onClick={() => dispatch(setSelectedChat(chat._id))}
-								>
-									<div className="flex w-full items-center gap-2">
-										<span>
-											{chat.participants[0].username === user?.username
-												? chat.participants[1].username
-												: chat.participants[0].username}
-										</span>
-										<span className="ml-auto text-xs">
-											{new Date(chat.updatedAt).toLocaleTimeString()}
-										</span>
-									</div>
-									<span className="font-medium">
-										Chat with{' '}
-										{chat.participants[0].username === user?.username
-											? chat.participants[1].username
-											: chat.participants[0].username}
-									</span>
-									<span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
-										{chat.lastMessage
-											? chat.lastMessage.content
-											: 'No messages yet'}
-									</span>
-								</a>
-							))}
+							{chats.map((chat) => {
+								const otherUser = chat.participants.find(
+									(p) => p.username !== user?.username
+								);
+								return (
+									<a
+										href="#"
+										key={chat._id}
+										className={`flex items-center gap-4 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
+											chat._id === selectedChat ? 'bg-sidebar-accent' : ''
+										}`}
+										onClick={() => dispatch(setSelectedChat(chat._id))}
+									>
+										<div className="relative">
+											<Avatar className="h-10 w-10">
+												<AvatarImage
+													src={otherUser?.avatarUrl}
+													alt={otherUser?.username}
+												/>
+												<AvatarFallback>
+													{otherUser?.username.slice(0, 2).toUpperCase()}
+												</AvatarFallback>
+											</Avatar>
+											<span
+												className={`absolute top-0 right-0 h-3 w-3 rounded-full border-2 border-white ${
+													otherUser?.isOnline ? 'bg-green-500' : 'bg-gray-300'
+												}`}
+											/>
+										</div>
+										<div className="flex flex-col flex-grow min-w-0">
+											<div className="flex items-center justify-between w-full">
+												<span className="font-medium truncate">
+													{otherUser?.username}
+												</span>
+												<span className="text-xs text-muted-foreground">
+													{new Date(chat.updatedAt).toLocaleTimeString()}
+												</span>
+											</div>
+											<span className="line-clamp-1 text-xs text-muted-foreground">
+												{chat.lastMessage
+													? chat.lastMessage.content
+													: 'No messages yet'}
+											</span>
+										</div>
+									</a>
+								);
+							})}
 						</SidebarGroupContent>
 					</SidebarGroup>
 				</SidebarContent>

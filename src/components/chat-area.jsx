@@ -2,20 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ChevronDown } from 'lucide-react';
+import { Check, CheckCheck, ChevronDown } from 'lucide-react';
 import { InputArea } from './input-area';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import io from 'socket.io-client';
 
 import {
 	getMessages,
+	markChatAsRead,
 	markMessageAsRead,
 	receiveMessage,
 } from '@/lib/features/chat/chatSlice';
 
-const socket = io('https://chat-app-backend-dx99.onrender.com', {
+const socket = io('http://localhost:5000', {
 	withCredentials: true,
 }); // Initialize socket connection
+// const socket = io('https://chat-app-backend-dx99.onrender.com', {
+// 	withCredentials: true,
+// }); // Initialize socket connection
 
 export function ChatArea() {
 	const { selectedChat, messages } = useAppSelector((state) => state.chat);
@@ -50,11 +54,23 @@ export function ChatArea() {
 		}
 
 		socket.on('newMessage', (message) => {
+			console.log(`file: chat-area.jsx:57 - socket.on - message:`, message);
 			dispatch(receiveMessage(message));
+			console.log(
+				`file: chat-area.jsx:58 - socket.on - selectedChat === message.chat:`,
+				selectedChat === message.chat && message.sender._id !== user.userId
+			);
+			if (selectedChat === message.chat && message.sender._id !== user.userId) {
+				dispatch(markChatAsRead(message._id));
+			}
 		});
 
-		socket.on('messageRead', (messageId) => {
-			dispatch(markMessageAsRead(messageId));
+		socket.on('messageRead', (message) => {
+			console.log(
+				`file: chat-area.jsx:65 - socket.on - message was read:`,
+				message
+			);
+			dispatch(markMessageAsRead(message.messageId));
 		});
 
 		return () => {
@@ -123,9 +139,18 @@ export function ChatArea() {
 									}`}
 								>
 									<p>{message.content}</p>
-									<p className="text-xs text-muted-foreground mt-1">
-										{new Date(message.createdAt).toLocaleTimeString()}
-									</p>
+									<div className="flex items-center justify-between gap-4">
+										<p className="text-xs text-muted-foreground mt-1">
+											{new Date(message.createdAt).toLocaleTimeString()}
+										</p>
+										{user.userId === message.sender._id ? (
+											message.isRead ? (
+												<CheckCheck className="h-4 w-4 ml-4 text-cyan-300" />
+											) : (
+												<CheckCheck className="h-4 w-4 ml-4" />
+											)
+										) : null}
+									</div>
 								</div>
 							</div>
 						</div>

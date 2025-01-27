@@ -52,6 +52,18 @@ export const sendMessage = createAsyncThunk(
 	}
 );
 
+export const markChatAsRead = createAsyncThunk(
+	'chat/markChatAsRead',
+	async (messageId, thunkAPI) => {
+		try {
+			const { data } = await customFetch.patch(`/message/${messageId}`);
+			return data;
+		} catch (error) {
+			return thunkAPI.rejectWithValue(error.response.data.message);
+		}
+	}
+);
+
 export const chatSlice = createSlice({
 	name: 'chat',
 	initialState: {
@@ -71,10 +83,13 @@ export const chatSlice = createSlice({
 			}
 		},
 		markMessageAsRead: (state, action) => {
-			const message = state.messages.find((m) => m._id === action.payload);
-			if (message) {
-				message.isRead = true;
-			}
+			// const message = state.messages.find((m) => m._id === action.payload);
+			// if (message) {
+			// 	message.isRead = true;
+			// }
+			state.messages = state.messages.map((m) =>
+				m._id === action.payload ? { ...m, isRead: true } : m
+			);
 		},
 	},
 	extraReducers: (builder) => {

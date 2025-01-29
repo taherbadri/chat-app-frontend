@@ -4,10 +4,14 @@ import * as React from 'react';
 import {
 	ArchiveX,
 	Command,
+	Edit,
 	File,
 	MessageCircle,
 	Send,
+	Settings,
+	Settings2,
 	Trash2,
+	Volume,
 } from 'lucide-react';
 
 import { NavUser } from '@/components/nav-user';
@@ -25,11 +29,10 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar';
-import { Switch } from '@/components/ui/switch';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { getChats, setSelectedChat } from '@/lib/features/chat/chatSlice';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-// import { Badge } from "@/components/ui/badge" // Removed Badge import
+import StatusOptionsPopover from './status-options-poover';
 
 const navItems = [
 	{
@@ -61,6 +64,7 @@ const navItems = [
 
 export function AppSidebar({ ...props }) {
 	const dispatch = useAppDispatch();
+	const [status, setStatus] = React.useState('Available');
 	const { chats, selectedChat } = useAppSelector((state) => state.chat);
 	const { user } = useAppSelector((state) => state.authentication);
 	const { setOpen } = useSidebar();
@@ -70,13 +74,19 @@ export function AppSidebar({ ...props }) {
 		dispatch(getChats());
 	}, [dispatch]); // Added dispatch to dependencies
 
+	const handleStatusChange = (newStatus) => {
+		setStatus(newStatus);
+		// You might want to update this in your global state or send it to a server
+		console.log(`Status changed to: ${newStatus}`);
+	};
+
 	return (
 		<Sidebar
 			collapsible="icon"
 			className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
 			{...props}
 		>
-			<Sidebar
+			{/* <Sidebar
 				collapsible="none"
 				className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
 			>
@@ -131,12 +141,29 @@ export function AppSidebar({ ...props }) {
 						}}
 					/>
 				</SidebarFooter>
-			</Sidebar>
+			</Sidebar> */}
+
 			<Sidebar collapsible="none" className="hidden flex-1 md:flex">
 				<SidebarHeader className="gap-3.5 border-b p-4">
-					<div className="flex w-full items-center justify-between">
-						<div className="text-base font-medium text-foreground">
-							{activeItem.title}
+					<div className="flex items-center justify-between gap-2">
+						<div className="flex items-center gap-2">
+							<Avatar className="h-16 w-16">
+								<AvatarImage src={user?.avatarUrl} alt={user?.username} />
+								<AvatarFallback>
+									{user?.username.slice(0, 2).toUpperCase()}
+								</AvatarFallback>
+							</Avatar>
+							<div className="flex flex-col">
+								<span className="font-medium truncate">{user?.username}</span>
+								<span className="text-xs text-muted-foreground">{status}</span>
+							</div>
+						</div>
+						<div className="flex gap-2 items-center">
+							<StatusOptionsPopover
+								onStatusChange={handleStatusChange}
+								currentStatus={status}
+							/>
+							<Settings2 className="w-5 h-5" />
 						</div>
 					</div>
 					<SidebarInput placeholder="Search chats..." />

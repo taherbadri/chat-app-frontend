@@ -72,10 +72,14 @@ export const chatSlice = createSlice({
 		messages: [],
 		isLoading: false,
 		error: null,
+		selectedChatUser: null,
 	},
 	reducers: {
 		setSelectedChat: (state, action) => {
 			state.selectedChat = action.payload;
+			state.selectedChatUser = state.chats.find(
+				(c) => c._id === action.payload
+			);
 		},
 		receiveMessage: (state, action) => {
 			if (state.selectedChat === action.payload.chat) {

@@ -3,7 +3,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Check, CheckCheck, ChevronDown } from 'lucide-react';
-import { InputArea } from './input-area';
+import InputArea from './input-area';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import io from 'socket.io-client';
 

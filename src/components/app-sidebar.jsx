@@ -86,12 +86,12 @@ export function AppSidebar({ ...props }) {
 			className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
 			{...props}
 		>
-			<Sidebar
+			{/* <Sidebar
 				collapsible="none"
 				className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
 			>
 				<SidebarHeader>
-					{/* <SidebarMenu>
+					<SidebarMenu>
 						<SidebarMenuItem>
 							<SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
 								<a href="#">
@@ -104,9 +104,9 @@ export function AppSidebar({ ...props }) {
 								</a>
 							</SidebarMenuButton>
 						</SidebarMenuItem>
-					</SidebarMenu> */}
+					</SidebarMenu>
 				</SidebarHeader>
-				{/* <SidebarContent>
+				<SidebarContent>
 					<SidebarGroup>
 						<SidebarGroupContent className="px-1.5 md:px-0">
 							<SidebarMenu>
@@ -132,7 +132,7 @@ export function AppSidebar({ ...props }) {
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
-				</SidebarContent> */}
+				</SidebarContent>
 				<SidebarFooter>
 					<NavUser
 						user={{
@@ -141,7 +141,7 @@ export function AppSidebar({ ...props }) {
 						}}
 					/>
 				</SidebarFooter>
-			</Sidebar>
+			</Sidebar> */}
 
 			<Sidebar collapsible="none" className="hidden flex-1 md:flex">
 				<SidebarHeader className="gap-3.5 border-b p-4">
@@ -221,6 +221,14 @@ export function AppSidebar({ ...props }) {
 						</SidebarGroupContent>
 					</SidebarGroup>
 				</SidebarContent>
+				<SidebarFooter>
+					<NavUser
+						user={{
+							name: user?.username,
+							email: user?.email,
+						}}
+					/>
+				</SidebarFooter>
 			</Sidebar>
 		</Sidebar>
 	);
